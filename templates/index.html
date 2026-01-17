@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>AI Smart Energy Management (Flask)</title>
+  <style>
+    body { font-family: Arial; margin: 30px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 18px; max-width: 700px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .metric { padding: 12px; border: 1px solid #eee; border-radius: 10px; }
+    .label { color: #666; font-size: 12px; }
+    .value { font-size: 22px; font-weight: bold; }
+    .warn { color: #b00020; font-weight: bold; }
+    .ok { color: #1b5e20; font-weight: bold; }
+    input { padding: 8px; width: 140px; }
+    button { padding: 8px 14px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h2>AI-Based Smart Energy Management System (Flask Deployment)</h2>
+
+<div class="card">
+  <form action="/predict-ui" method="POST">
+    <label>Row index (0 to {{max_index}}):</label>
+    <input name="row_index" type="number" min="0" max="{{max_index}}" value="{{result.row_index}}" />
+    <button type="submit">Predict</button>
+  </form>
+
+  <p><b>Date:</b> {{ result.date }}</p>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="label">Predicted Appliances (next-step)</div>
+      <div class="value">{{ "%.2f"|format(result.predicted_appliances) }} Wh</div>
+    </div>
+
+    <div class="metric">
+      <div class="label">Occupancy Probability</div>
+      <div class="value">{{ "%.1f"|format(result.occupancy_probability * 100) }}%</div>
+    </div>
+
+    <div class="metric">
+      <div class="label">Anomaly</div>
+      {% if result.anomaly %}
+        <div class="value warn">YES ⚠</div>
+      {% else %}
+        <div class="value ok">NO ✅</div>
+      {% endif %}
+    </div>
+
+    <div class="metric">
+      <div class="label">Model</div>
+      <div class="value">Loaded from PKL</div>
+    </div>
+  </div>
+
+  <p style="margin-top:14px;">
+    API endpoint: <code>POST /predict</code> with JSON <code>{"row_index": 1000}</code>
+  </p>
+</div>
+
+</body>
+</html>
